@@ -4,6 +4,7 @@ from itertools import cycle
 from collections import deque
 
 from src.trafficsignalcontroller import TrafficSignalController
+from src.trafficmetrics import TrafficMetrics
 
 class NextPhaseRLTSC(TrafficSignalController):
     def __init__(self, conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent):
@@ -89,10 +90,11 @@ class NextPhaseRLTSC(TrafficSignalController):
 
 class NextPhaseRLTSC_Queue(NextPhaseRLTSC):
     def __init__(self, conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent):
-        from src.trafficmetrics import TrafficMetrics
         super().__init__(conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent)
         if mode == 'train':
             self.metric_args = ['queue', 'delay']
+        if mode == 'test':
+            self.metric_args = ['queue', 'delay', 'pressure']
         self.trafficmetrics = TrafficMetrics(tsc_id, self.incoming_lanes, netdata, self.metric_args, mode)
 
     def get_reward(self):

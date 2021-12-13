@@ -51,7 +51,7 @@ class TrafficSignalController:
         if mode == 'train':
             self.metric_args = ['delay']
         if mode == 'test':
-            self.metric_args = ['queue', 'delay']
+            self.metric_args = ['queue', 'delay', 'pressure']
         self.trafficmetrics = TrafficMetrics(tsc_id, self.incoming_lanes, netdata, self.metric_args, mode)
 
         self.ep_rewards = []

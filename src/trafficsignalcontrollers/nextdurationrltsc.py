@@ -3,6 +3,7 @@ from itertools import cycle
 from collections import deque
 
 from src.trafficsignalcontroller import TrafficSignalController
+from src.trafficmetrics import TrafficMetrics
 
 class NextDurationRLTSC(TrafficSignalController):
     def __init__(self, conn, tsc_id, mode, netdata, red_t, yellow_t, gmin, gmax, rlagent):

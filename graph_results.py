@@ -12,11 +12,16 @@ from src.graphs import graph, boxplot, multi_line, multi_line_with_CI, get_cmap,
 from src.picklefuncs import load_data
 from src.helper_funcs import check_and_make_dir
 
+exclude = {'gneJ0', 'gneJ6'}
+
 def main():
     global_params()
     #you must have the same number of colours as labels
-    colours = ['b', 'c', 'green', 'olive', 'brown', 'orange', 'y', 'm', 'gray']
-    labels = {'ddpg':'DDPG', 'dqn':'DQN', 'dqn_queue':'DQN_Queue', 'dqn_pressure':'DQN_Pressure', 'doubledqn':'DoubleDQN', 'sotl':'SOTL', 'maxpressure':'Max-pressure', 'websters':'Webster\'s', 'uniform':'Uniform'}
+    colours = ['b', 'c', 'green', 'olive', 'brown', 'cyan', 'purple', 'y', 'm', 'gray']
+
+    labels = {'ddpg':'DDPG', 'dqn':'DQN', 'dqn_queue':'DQN_Queue', 'dqn_pressure':'DQN_Pressure',
+              'doubledqn':'DoubleDQN', 'doubledqn_pressure':'DoubleDQN_Pressure',
+              'sotl':'SOTL', 'maxpressure':'Max-pressure', 'websters':'Webster\'s', 'uniform':'Uniform'}
     if len(colours) != len(labels):
         assert 0, 'Error: the number of colours '+str(len(colours))+' does not equal the number of labels'+str(len(labels))
 
@@ -265,6 +270,7 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
     if 'sotl' in tsc:
         tsc.remove('sotl')
     intersections = os.listdir(fp+tsc[0]+'/'+metrics[0]+'/')
+    intersections = list(set(intersections) - exclude)
     ncols = len(intersections)
     nrows = len(metrics)
 
