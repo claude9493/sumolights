@@ -1,4 +1,6 @@
 import tensorflow as tf
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class VariableState:
     """

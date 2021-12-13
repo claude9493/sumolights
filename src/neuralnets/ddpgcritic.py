@@ -9,6 +9,8 @@ from src.picklefuncs import save_data, load_data
 from src.neuralnet import NeuralNet
 from src.neuralnets.varstate import VariableState
 from src.helper_funcs import check_and_make_dir
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class DDPGCriticNet:
     def __init__(self, input_d, hidden_d, hidden_act, output_d, output_act, lr, lre, name, sess):

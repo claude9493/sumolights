@@ -11,6 +11,8 @@ from src.nn_factory import gen_neural_networks
 from src.rl_factory import rl_factory
 from src.helper_funcs import write_line_to_file, check_and_make_dir, get_time_now, write_to_log
 from src.picklefuncs import save_data, load_data
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class LearnerProc(Process):
     def __init__(self, idx, args, barrier, netdata, agent_ids, rl_stats, exp_replay):

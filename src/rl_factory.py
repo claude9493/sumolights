@@ -2,6 +2,8 @@ from src.rlagents.dqnagent import DQNAgent
 from src.rlagents.ddpgagent import DDPGAgent
 from src.rlagents.doubledqnagent import DoubleDQNAgent
 import alg_collections
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def rl_factory(rl_type, args, neural_network, exp_replay, rl_stats, n_actions, eps):
     if rl_type in alg_collections.rl_dqn:

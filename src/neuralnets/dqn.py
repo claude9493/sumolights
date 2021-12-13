@@ -8,6 +8,8 @@ from tensorflow.keras.optimizers import Adam
 
 from src.neuralnet import NeuralNet
 from src.helper_funcs import check_and_make_dir
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class DQN(NeuralNet):
     def __init__(self, input_d, hidden_d, hidden_act, output_d, output_act, lr, lre, learner=False):

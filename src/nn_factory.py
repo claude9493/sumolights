@@ -5,6 +5,8 @@ import alg_collections
 from src.neuralnets.dqn import DQN
 from src.neuralnets.ddpgactor import DDPGActor
 from src.neuralnets.ddpgcritic import DDPGCritic
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def nn_factory( nntype, input_d, output_d, args, learner, load, tsc, n_hidden, sess=None):
     nn = None

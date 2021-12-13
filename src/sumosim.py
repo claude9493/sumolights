@@ -14,6 +14,8 @@ from src.trafficsignalcontroller import TrafficSignalController
 from src.tsc_factory import tsc_factory
 from src.vehiclegen import VehicleGen
 from src.helper_funcs import write_to_log
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class SumoSim:
     def __init__(self, cfg_fp, sim_len, tsc, nogui, netdata, args, idx):

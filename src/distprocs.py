@@ -10,6 +10,9 @@ from src.sumosim import SumoSim
 import alg_collections
 import numpy as np
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 def get_sim(sim_str):
     if sim_str == 'lust':                                        
         cfg_fp = 'networks/lust/scenario/dua.actuated.sumocfg'     

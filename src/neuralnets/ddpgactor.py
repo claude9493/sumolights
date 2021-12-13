@@ -8,6 +8,8 @@ from src.neuralnet import NeuralNet
 from src.neuralnets.varstate import VariableState
 from src.picklefuncs import save_data, load_data
 from src.helper_funcs import check_and_make_dir
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class DDPGActorNet:
     def __init__(self, input_d, hidden_d, hidden_act, output_d, output_act, lr, lre, name, batch_size, sess):
