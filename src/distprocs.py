@@ -25,7 +25,7 @@ def get_sim(sim_str):
 class DistProcs:
     def __init__(self, args, tsc, mode):
         self.args = args
-        rl_tsc = ['ddpg', 'dqn']
+        rl_tsc = ['ddpg', 'dqn', 'dqn_queue', 'dqn_pressure']
         traditional_tsc = ['websters', 'maxpressure', 'sotl', 'uniform']
 
         #depending on tsc alg, different hyper param checks
@@ -65,7 +65,7 @@ class DistProcs:
         netdata = nd.get_net_data()
 
         #create a dummy sim to get tsc data for creating nn
-        #print('creating dummy sim for netdata...')
+        print('creating dummy sim for netdata...')
         sim = SumoSim(args.cfg_fp, args.sim_len, args.tsc, True, netdata, args, -1)
         sim.gen_sim()
         netdata = sim.update_netdata()

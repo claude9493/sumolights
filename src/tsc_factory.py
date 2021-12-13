@@ -2,7 +2,7 @@ from src.trafficsignalcontrollers.uniformcycletsc import UniformCycleTSC
 from src.trafficsignalcontrollers.websterstsc import WebstersTSC
 from src.trafficsignalcontrollers.maxpressuretsc import MaxPressureTSC
 from src.trafficsignalcontrollers.sotltsc import SOTLTSC
-from src.trafficsignalcontrollers.nextphaserltsc import NextPhaseRLTSC
+from src.trafficsignalcontrollers.nextphaserltsc import NextPhaseRLTSC, NextPhaseRLTSC_Queue, NextPhaseRLTSC_Pressure
 from src.trafficsignalcontrollers.nextdurationrltsc import NextDurationRLTSC
 from src.rl_factory import rl_factory
 
@@ -25,6 +25,16 @@ def tsc_factory(tsc_type, tl, args, netdata, rl_stats, exp_replay, neural_networ
         dqnagent = rl_factory(tsc_type, args,
                               neural_network, exp_replay, rl_stats, len(netdata['inter'][tl]['green_phases']), eps)
         return NextPhaseRLTSC(conn, tl, args.mode, netdata, args.r, args.y,
+                              args.g_min, dqnagent)
+    elif tsc_type == 'dqn_queue':
+        dqnagent = rl_factory(tsc_type, args,
+                              neural_network, exp_replay, rl_stats, len(netdata['inter'][tl]['green_phases']), eps)
+        return NextPhaseRLTSC_Queue(conn, tl, args.mode, netdata, args.r, args.y,
+                              args.g_min, dqnagent)
+    elif tsc_type == 'dqn_pressure':
+        dqnagent = rl_factory(tsc_type, args,
+                              neural_network, exp_replay, rl_stats, len(netdata['inter'][tl]['green_phases']), eps)
+        return NextPhaseRLTSC_Pressure(conn, tl, args.mode, netdata, args.r, args.y,
                               args.g_min, dqnagent)
     elif tsc_type == 'ddpg':
         ddpgagent = rl_factory(tsc_type, args,

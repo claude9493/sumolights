@@ -168,7 +168,7 @@ class LearnerProc(Process):
                 #synchronize target/online weights
                 neural_networks[nn]['actor'].set_weights(weights, 'target')
                 neural_networks[nn]['critic'].set_weights(critic_weights, 'target')
-            elif self.args.tsc == 'dqn':
+            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure']:
                 weights = neural_networks[nn].get_weights('online')
                 #synchronize target/online weights
                 neural_networks[nn].set_weights(weights, 'target')
@@ -187,7 +187,7 @@ class LearnerProc(Process):
                 neural_networks[nn]['critic'].save_weights('online', path, nn)
                 path = '/'.join(path_dirs+['actor'])+'/'
                 neural_networks[nn]['actor'].save_weights('online', path, nn)
-            elif self.args.tsc == 'dqn':
+            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure']:
                 path = '/'.join(path_dirs)+'/'
                 neural_networks[nn].save_weights('online', path, nn)
             else:

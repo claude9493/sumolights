@@ -20,6 +20,9 @@ class TrafficMetrics:
         if 'queue' in metric_args:
             self.metrics['queue'] = QueueMetric(_id, incoming_lanes, mode)
 
+        if 'pressure' in metric_args:
+            self.metrics['pressure'] = PressureMetric(_id, incoming_lanes, netdata, mode)
+
     def update(self, v_data):
         for m in self.metrics:
             self.metrics[m].update(v_data)
@@ -110,5 +113,49 @@ class QueueMetric(TrafficMetric):
                     lane_queues[lane] += 1
 
         self.lane_queues = lane_queues
+        if self.mode == 'test':
+            self.history.append(self.get_metric())
+
+class PressureMetric(TrafficMetric):
+    # Pressure of current phase
+    def __init__(self, _id, incoming_lanes, netdata, mode):
+        super().__init__(_id, incoming_lanes, mode)
+        self.stop_speed = 0.3
+        self.netdata = netdata
+        ol = []
+        for l in self.incoming_lanes:
+            ol.extend(list(self.netdata['lane'][l]['outgoing'].keys()))
+        self.outgoing_lanes = sorted(ol)
+        # print('incoming lanes ', self.incoming_lanes)
+        # print('outgoing lanes', self.outgoing_lanes)
+        # self.outgoing_lanes = set([self.netdata['lane'][l]['outgoing'].keys()] for l in self.incoming_lanes)
+        self.incoming_lane_queues = {lane: 0 for lane in self.incoming_lanes}
+        self.outgoing_lane_queues = {lane: 0 for lane in self.outgoing_lanes}
+
+    def get_metric(self):
+        return sum(self.incoming_lane_queues.values()) - sum(self.outgoing_lane_queues.values())
+
+    def update(self, v_data):
+        # print("v_data")
+        # print(v_data)
+        lane_queues = {}
+        for lane in self.incoming_lanes:
+            lane_queues[lane] = 0
+            for v in v_data[lane]:
+                if v_data[lane][v][traci.constants.VAR_SPEED] < self.stop_speed:
+                    lane_queues[lane] += 1
+        self.incoming_lane_queues = lane_queues
+
+        self.outgoing_lane_queues = {lane:len(v_data[lane]) if lane in v_data else 0 for lane in self.outgoing_lanes}
+        # print('incoming ', self.incoming_lane_queues)
+        # print('outgoing ', self.outgoing_lane_queues, end='\n\n')
+        # lane_queues = {}
+        # for lane in self.outgoing_lanes:
+            # lane_queues[lane] = 0
+            # for v in v_data[lane]:
+            #     if v_data[lane][v][traci.constants.VAR_SPEED] < self.stop_speed:
+            #         lane_queues[lane] += 1
+        # self.outgoing_lane_queues = lane_queues
+
         if self.mode == 'test':
             self.history.append(self.get_metric())

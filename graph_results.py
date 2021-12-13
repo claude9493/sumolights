@@ -15,8 +15,8 @@ from src.helper_funcs import check_and_make_dir
 def main():
     global_params()
     #you must have the same number of colours as labels
-    colours = ['b', 'c', 'orange', 'y', 'm', 'gray']
-    labels = {'ddpg':'DDPG', 'dqn':'DQN', 'sotl':'SOTL', 'maxpressure':'Max-pressure', 'websters':'Webster\'s', 'uniform':'Uniform'}
+    colours = ['b', 'c', 'green', 'olive', 'orange', 'y', 'm', 'gray']
+    labels = {'ddpg':'DDPG', 'dqn':'DQN', 'dqn_queue':'DQN_Queue', 'dqn_pressure':'DQN_Pressure', 'sotl':'SOTL', 'maxpressure':'Max-pressure', 'websters':'Webster\'s', 'uniform':'Uniform'}
     if len(colours) != len(labels):
         assert 0, 'Error: the number of colours '+str(len(colours))+' does not equal the number of labels'+str(len(labels))
 
@@ -261,8 +261,9 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
     #rows are metrics
     #columns are intersections
 
-    tsc = os.listdir(fp)                          
-    tsc.remove('sotl')
+    tsc = os.listdir(fp)
+    if 'sotl' in tsc:
+        tsc.remove('sotl')
     intersections = os.listdir(fp+tsc[0]+'/'+metrics[0]+'/')
     ncols = len(intersections)
     nrows = len(metrics)

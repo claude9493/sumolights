@@ -2,7 +2,7 @@ from src.rlagents.dqnagent import DQNAgent
 from src.rlagents.ddpgagent import DDPGAgent
 
 def rl_factory(rl_type, args, neural_network, exp_replay, rl_stats, n_actions, eps):
-    if rl_type == 'dqn':
+    if rl_type in ['dqn', 'dqn_queue', 'dqn_pressure']:
         return DQNAgent(neural_network,
                         eps,                                     
                         exp_replay,                                   

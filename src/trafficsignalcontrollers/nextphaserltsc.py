@@ -85,3 +85,43 @@ class NextPhaseRLTSC(TrafficSignalController):
         
     def update(self, data):
         self.data = data 
+
+
+class NextPhaseRLTSC_Queue(NextPhaseRLTSC):
+    def __init__(self, conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent):
+        from src.trafficmetrics import TrafficMetrics
+        super().__init__(conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent)
+        if mode == 'train':
+            self.metric_args = ['queue', 'delay']
+        self.trafficmetrics = TrafficMetrics(tsc_id, self.incoming_lanes, netdata, self.metric_args, mode)
+
+    def get_reward(self):
+        #return negative Queue as reward
+        queue = int(self.trafficmetrics.get_metric('queue'))
+        if queue == 0:
+            r = 0
+        else:
+            r = -queue
+        self.ep_rewards.append(r)
+        return r
+
+
+class NextPhaseRLTSC_Pressure(NextPhaseRLTSC):
+    def __init__(self, conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent):
+        from src.trafficmetrics import TrafficMetrics
+        super().__init__(conn, tsc_id, mode, netdata, red_t, yellow_t, green_t, rlagent)
+        if mode == 'train':
+            self.metric_args = ['pressure', 'delay']
+        if mode == 'test':
+            self.metric_args = ['queue', 'delay', 'pressure']
+        self.trafficmetrics = TrafficMetrics(tsc_id, self.incoming_lanes, netdata, self.metric_args, mode)
+
+    def get_reward(self):
+        #return negative Pressure as reward
+        pressure = int(self.trafficmetrics.get_metric('pressure'))
+        if pressure == 0:
+            r = 0
+        else:
+            r = -pressure
+        self.ep_rewards.append(r)
+        return r
