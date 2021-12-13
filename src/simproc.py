@@ -14,6 +14,7 @@ from src.sumosim import SumoSim
 from src.nn_factory import gen_neural_networks
 from src.picklefuncs import save_data
 from src.helper_funcs import check_and_make_dir, get_time_now, write_to_log
+import alg_collections
 
 class SimProc(Process):
     def __init__(self, idx, args, barrier, netdata, rl_stats, exp_replays, eps, offset):
@@ -155,10 +156,10 @@ class SimProc(Process):
     def sync_nn_weights(self, neural_networks):
         for nn in neural_networks:
             weights = self.rl_stats[nn]['online']
-            if self.args.tsc == 'ddpg':
+            if self.args.tsc in alg_collections.nn_ddpg:
                 #sync actor weights
                 neural_networks[nn]['actor'].set_weights(weights, 'online')
-            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']:
+            elif self.args.tsc in alg_collections.nn_dqn:
                 neural_networks[nn].set_weights(weights, 'online')
             else:
                 #raise not found exceptions

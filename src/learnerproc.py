@@ -6,6 +6,7 @@ import numpy as np
 
 from tensorflow.python.framework.ops import disable_eager_execution
 
+import alg_collections
 from src.nn_factory import gen_neural_networks
 from src.rl_factory import rl_factory
 from src.helper_funcs import write_line_to_file, check_and_make_dir, get_time_now, write_to_log
@@ -152,7 +153,7 @@ class LearnerProc(Process):
     def gen_agents(self, neural_networks):
         agents = {}
         for agent in self.agent_ids:
-            n_actions = 1 if self.args.tsc == 'ddpg' else len(self.netdata['inter'][agent]['green_phases'])
+            n_actions = 1 if self.args.tsc in alg_collections.rl_ddpg else len(self.netdata['inter'][agent]['green_phases'])
             agents[agent] = rl_factory(self.args.tsc, 
                                        self.args, 
                                        neural_networks[agent], 
@@ -164,14 +165,14 @@ class LearnerProc(Process):
         
     def distribute_weights(self, neural_networks):
         for nn in neural_networks:
-            if self.args.tsc == 'ddpg':
+            if self.args.tsc in alg_collections.nn_ddpg:
                 #sync actor weights
                 weights = neural_networks[nn]['actor'].get_weights('online')
                 critic_weights = neural_networks[nn]['critic'].get_weights('online')
                 #synchronize target/online weights
                 neural_networks[nn]['actor'].set_weights(weights, 'target')
                 neural_networks[nn]['critic'].set_weights(critic_weights, 'target')
-            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']:
+            elif self.args.tsc in alg_collections.nn_dqn:
                 weights = neural_networks[nn].get_weights('online')
                 #synchronize target/online weights
                 neural_networks[nn].set_weights(weights, 'target')
@@ -185,12 +186,12 @@ class LearnerProc(Process):
     def save_weights(self, neural_networks):
         path_dirs = [self.args.save_path, self.args.tsc]
         for nn in neural_networks:
-            if self.args.tsc == 'ddpg':
+            if self.args.tsc in alg_collections.nn_ddpg:
                 path = '/'.join(path_dirs+['critic'])+'/'
                 neural_networks[nn]['critic'].save_weights('online', path, nn)
                 path = '/'.join(path_dirs+['actor'])+'/'
                 neural_networks[nn]['actor'].save_weights('online', path, nn)
-            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']:
+            elif self.args.tsc in alg_collections.nn_dqn:
                 path = '/'.join(path_dirs)+'/'
                 neural_networks[nn].save_weights('online', path, nn)
             else:

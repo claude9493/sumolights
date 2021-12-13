@@ -7,7 +7,7 @@ from src.simproc import SimProc
 from src.learnerproc import LearnerProc
 from src.networkdata import NetworkData
 from src.sumosim import SumoSim
-
+import alg_collections
 import numpy as np
 
 def get_sim(sim_str):
@@ -25,8 +25,8 @@ def get_sim(sim_str):
 class DistProcs:
     def __init__(self, args, tsc, mode):
         self.args = args
-        rl_tsc = ['ddpg', 'dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']
-        traditional_tsc = ['websters', 'maxpressure', 'sotl', 'uniform']
+        rl_tsc = alg_collections.tsc_rl
+        traditional_tsc = alg_collections.tsc_traditional
 
         #depending on tsc alg, different hyper param checks
         if tsc in rl_tsc:

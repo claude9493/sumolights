@@ -41,6 +41,11 @@ def tsc_factory(tsc_type, tl, args, netdata, rl_stats, exp_replay, neural_networ
                               neural_network, exp_replay, rl_stats, len(netdata['inter'][tl]['green_phases']), eps)
         return NextPhaseRLTSC(conn, tl, args.mode, netdata, args.r, args.y,
                               args.g_min, doubledqnagent)
+    elif tsc_type == 'doubledqn_pressure':
+        doubledqnagent = rl_factory(tsc_type, args,
+                              neural_network, exp_replay, rl_stats, len(netdata['inter'][tl]['green_phases']), eps)
+        return NextPhaseRLTSC_Pressure(conn, tl, args.mode, netdata, args.r, args.y,
+                              args.g_min, doubledqnagent)
     elif tsc_type == 'ddpg':
         ddpgagent = rl_factory(tsc_type, args,
                                 neural_network, exp_replay, rl_stats, 1, eps)
