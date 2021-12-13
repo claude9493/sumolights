@@ -18,7 +18,10 @@ def get_headers(fp):
     return headers
 
 def get_data(fp):
-    data = np.loadtxt(fp, delimiter=',', skiprows=1).T
+    # print(fp)
+    data = np.loadtxt(fp, delimiter=',', skiprows=1, usecols=[1])
+    # print(data)
+    data = data.T
     if data.ndim == 1:
         return [ [d for d in data] ]
     else:

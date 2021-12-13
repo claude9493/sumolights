@@ -34,7 +34,7 @@ def main():
     if args.type == 'moe':
         fp = 'metrics/'
         graph_travel_time(labels, colours, fp, args.save_dir)
-        metrics = ['queue', 'delay']
+        metrics = ['queue', 'delay', 'pressure']
         graph_individual_intersections(labels, colours, fp, metrics, args.save_dir)
     elif args.type == 'hp': 
         fp = 'hp/'
@@ -188,7 +188,8 @@ def graph_travel_time(labels, colours, fp, save_dir):
                               #ytitle_pad = ('Travel Time (s)\n('+r"/mu,/sigma,"+"median)", 60),                      
                               ytitle_pad = (t, 60),                      
                               title='Traffic Signal Controller\nTravel Time) ',     
-                              legend=(0.82, 0.72),                                   
+                              legend=(0.82, 0.72),
+                              # legend=(1.04,1),
                               grid=True)                                             
 
     for i, d in enumerate(data_order):
@@ -222,6 +223,7 @@ def graph_conf_interval(labels, colours, fp, metric):
 
 def get_data(fp, metric, read_data_func):
     tsc = os.listdir(fp)
+    tsc = list(set(tsc) - {'.DS_Store'})
     tsc_data = { t:read_data_func(fp+t+'/'+metric) for t in tsc}
     return tsc_data
 
@@ -291,11 +293,13 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
         #graph same metric for each intersection
         for I, c in zip(intersections, range(ncols)):
             title = I if r == 0 else ''
-            if m == 'queue':
+            if m in ['queue', 'pressure']:
                 ytitle = m.capitalize()+r" $(veh)$" if c == 0 else ''
-            else:
+            elif m == 'delay':
                 ytitle = m.capitalize()+r" $(s)$" if c == 0 else ''
-            legend = (0.59, 0.6)
+
+            # legend = (0.59, 0.6) if r == 0 else None  # Legend only appears at the first row
+            legend = (1.01, 1) if r == 0 else None  # Legend only appears at the first row
                 
             data_order = sorted(data.keys())               
             alias_p = 60 
@@ -314,6 +318,8 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
                    grid=True)
             ax[r,c].set_xlim(left=0)
             ax[r,c].set_ylim(bottom=0)
+            # if m == 'delay':
+            #     ax[r,c].set_yscale('symlog', basey=10)
     f.suptitle('Intersection Measures of Effectiveness')                                             
     save_graph(f, save_dir+'intersection_moe.pdf', 600, 14, 24.9)
     plt.show() 

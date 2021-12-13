@@ -29,11 +29,13 @@ def graph(ax, data, graph_func, xtitle=None, ytitle_pad=None, title=None, legend
     if legend:
         #ax.legend(elements, labels, loc=legend, framealpha=1.0)
         if colours is None:
-            ax.legend(elements, labels, loc=legend, framealpha=1.0)
+            # ax.legend(elements, labels, loc=legend, framealpha=1.0)
+            ax.legend(elements, labels, bbox_to_anchor=legend, borderaxespad=0, framealpha=1.0)
+
         else:
             patches = [ mpatches.Patch(color=colours[l], label=l) for l in labels]
-            ax.legend(handles=patches, loc=legend, framealpha=1.0)
-
+            # ax.legend(handles=patches, loc=legend, framealpha=1.0)
+            ax.legend(elements, labels, bbox_to_anchor=legend, borderaxespad=0, framealpha=1.0)
     if grid:
         ax.grid(linestyle='--')
 
