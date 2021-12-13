@@ -10,7 +10,7 @@ def nn_factory( nntype, input_d, output_d, args, learner, load, tsc, n_hidden, s
     nn = None
     hidden_layers = [input_d*n_hidden, input_d*n_hidden]
 
-    if nntype == 'dqn':
+    if nntype == 'dqn' or nntype == 'doubledqn':
          nn = DQN(input_d, hidden_layers,     
                   args.hidden_act, output_d,  
                   'linear', args.lr,          
@@ -42,7 +42,7 @@ def nn_factory( nntype, input_d, output_d, args, learner, load, tsc, n_hidden, s
 def get_in_out_d(tsctype, n_incoming_lanes, n_phases):
     #+1 for the all red phase (i.e., terminal state, no vehicles at intersection)
     input_d = (n_incoming_lanes*2) + n_phases + 1
-    if tsctype == 'dqn':
+    if tsctype == 'dqn' or tsctype == 'doubledqn':
         return input_d, n_phases
     elif tsctype == 'ddpg':
         return input_d, 1
@@ -52,7 +52,7 @@ def get_in_out_d(tsctype, n_incoming_lanes, n_phases):
 
 def gen_neural_networks(args, netdata, tsctype, tsc_ids, learner, load, n_hidden):
         neural_nets = {}
-        if tsctype == 'dqn' or tsctype == 'ddpg':
+        if tsctype == 'dqn' or tsctype == 'doubledqn' or tsctype == 'ddpg':
             sess = None
             #if using tf, prepare necessary
             if tsctype == 'ddpg':
@@ -90,7 +90,7 @@ def gen_neural_networks(args, netdata, tsctype, tsc_ids, learner, load, n_hidden
                 print('Trying to load '+str(tsctype)+' parameters ...')
                 path_dirs = [args.save_path, args.tsc]                 
                 for tsc in tsc_ids:                                    
-                    if tsctype == 'dqn':                               
+                    if tsctype == 'dqn' or tsctype == 'doubledqn':
                         path = '/'.join(path_dirs+[tsc])               
                         neural_nets[tsc].load_weights(path)            
                     elif tsctype == 'ddpg':                            

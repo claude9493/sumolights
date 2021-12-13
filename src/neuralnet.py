@@ -17,7 +17,7 @@ class NeuralNet:
         pass
 
     def forward(self, _input, nettype):
-        return self.models[nettype].predict(_input)
+        pass
 
     def backward(self):
         pass
