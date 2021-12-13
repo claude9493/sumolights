@@ -52,15 +52,7 @@ class RLAgent:
         pass
 
     def compute_targets(self, rewards, R):
-        ###compute targets using discounted rewards
-        target_batch = []
-
-        for i in reversed(range(len(rewards))):
-            R = rewards[i] + (self.gamma * R)
-            target_batch.append(R)
-
-        target_batch.reverse()
-        return target_batch
+        pass
 
     def sample_replay(self):
         ###randomly sampled trajectories from shared experience replay

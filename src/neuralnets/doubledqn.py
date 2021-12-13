@@ -9,11 +9,12 @@ from tensorflow.keras.optimizers import Adam
 from src.neuralnet import NeuralNet
 from src.helper_funcs import check_and_make_dir
 
-class DQN(NeuralNet):
+
+class DoubleDQN(NeuralNet):
     def __init__(self, input_d, hidden_d, hidden_act, output_d, output_act, lr, lre, learner=False):
         super().__init__(input_d, hidden_d, hidden_act, output_d, output_act, learner=learner)
         for model in self.models:
-            #self.models[model].compile(Adam(learning_rate=lr, epsilon=lre), loss='mse')
+            # self.models[model].compile(Adam(learning_rate=lr, epsilon=lre), loss='mse')
             self.models[model].compile(Adam(lr=lr, epsilon=lre), loss='mse')
 
     def create_model(self, input_d, hidden_d, hidden_act, output_d, output_act):
@@ -29,9 +30,9 @@ class DQN(NeuralNet):
 
     def forward(self, _input, nettype):
         return self.models[nettype].predict(_input)
-  
+
     def backward(self, _input, _target):
-        self.models['online'].fit(_input, _target, batch_size = 1, epochs = 1,  verbose=0 )
+        self.models['online'].fit(_input, _target, batch_size=1, epochs=1, verbose=0)
 
     def transfer_weights(self):
         """ Transfer online weights to target model.
@@ -40,27 +41,28 @@ class DQN(NeuralNet):
 
     def get_weights(self, nettype):
         return self.models[nettype].get_weights()
-                                                          
+
     def set_weights(self, weights, nettype):
         return self.models[nettype].set_weights(weights)
 
     def save_weights(self, nettype, path, fname):
         check_and_make_dir(path)
-        self.models[nettype].save_weights(path+fname+'.h5', save_format='h5', overwrite='True')
-       
+        self.models[nettype].save_weights(path + fname + '.h5', save_format='h5', overwrite='True')
+
     def load_weights(self, path):
         path += '.h5'
         if os.path.exists(path):
             self.models['online'].load_weights(path)
         else:
-            #raise not found exceptions
-            assert 0, 'Failed to load weights, supplied weight file path '+str(path)+' does not exist.'
+            # raise not found exceptions
+            assert 0, 'Failed to load weights, supplied weight file path ' + str(path) + ' does not exist.'
+
 
 if __name__ == '__main__':
     input_d = 10
-    dqn = DQN( input_d, [20, 20], 'relu', 4, 'linear', 0.0001, 0.0000001)
+    dqn = DQN(input_d, [20, 20], 'relu', 4, 'linear', 0.0001, 0.0000001)
 
-    x = np.random.uniform(0.0, 1.0, size=(1,input_d))
+    x = np.random.uniform(0.0, 1.0, size=(1, input_d))
 
     output = dqn.forward(x, 'online')
     print(output)

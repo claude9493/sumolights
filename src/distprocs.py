@@ -25,7 +25,7 @@ def get_sim(sim_str):
 class DistProcs:
     def __init__(self, args, tsc, mode):
         self.args = args
-        rl_tsc = ['ddpg', 'dqn', 'dqn_queue', 'dqn_pressure']
+        rl_tsc = ['ddpg', 'dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']
         traditional_tsc = ['websters', 'maxpressure', 'sotl', 'uniform']
 
         #depending on tsc alg, different hyper param checks

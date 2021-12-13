@@ -87,7 +87,10 @@ class LearnerProc(Process):
                         print(tsc+' exp replay full, beginning batch updates********')
                         #write_to_log(' LEARNER #'+str(self.idx)+' START LEARNING '+str(tsc))
                         self.rl_stats[tsc]['n_exp'] = len(self.exp_replay[tsc])
-                    if self.rl_stats[tsc]['updates'] < self.args.updates and self.rl_stats[tsc]['n_exp'] > 0: 
+
+
+
+                    if self.rl_stats[tsc]['updates'] < self.args.updates and self.rl_stats[tsc]['n_exp'] > 0:
                         for i in range(min(self.rl_stats[tsc]['n_exp'], 4)):
                            agents[tsc].train_batch(self.args.target_freq)
                         agents[tsc].clip_exp_replay()
@@ -168,7 +171,7 @@ class LearnerProc(Process):
                 #synchronize target/online weights
                 neural_networks[nn]['actor'].set_weights(weights, 'target')
                 neural_networks[nn]['critic'].set_weights(critic_weights, 'target')
-            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure']:
+            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']:
                 weights = neural_networks[nn].get_weights('online')
                 #synchronize target/online weights
                 neural_networks[nn].set_weights(weights, 'target')
@@ -187,7 +190,7 @@ class LearnerProc(Process):
                 neural_networks[nn]['critic'].save_weights('online', path, nn)
                 path = '/'.join(path_dirs+['actor'])+'/'
                 neural_networks[nn]['actor'].save_weights('online', path, nn)
-            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure']:
+            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']:
                 path = '/'.join(path_dirs)+'/'
                 neural_networks[nn].save_weights('online', path, nn)
             else:

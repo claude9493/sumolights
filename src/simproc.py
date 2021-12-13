@@ -158,7 +158,7 @@ class SimProc(Process):
             if self.args.tsc == 'ddpg':
                 #sync actor weights
                 neural_networks[nn]['actor'].set_weights(weights, 'online')
-            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure']:
+            elif self.args.tsc in ['dqn', 'dqn_queue', 'dqn_pressure', 'doubledqn']:
                 neural_networks[nn].set_weights(weights, 'online')
             else:
                 #raise not found exceptions
