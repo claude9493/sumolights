@@ -110,14 +110,4 @@ class DQNAgent(RLAgent):
     def retrieve_weights(self, nettype):
         self.networks.set_weights(self.rl_stats[nettype], nettype)
 
-    def compute_targets(self, rewards, R):
-        ###compute targets using discounted rewards
-        target_batch = []
-
-        for i in reversed(range(len(rewards))):
-            R = rewards[i] + (self.gamma * R)
-            target_batch.append(R)
-
-        target_batch.reverse()
-        return target_batch
 

@@ -101,3 +101,5 @@ class DDPGAgent(RLAgent):
 
     def retrieve_weights(self, nettype):
         self.networks['actor'].set_weights(self.rl_stats[nettype], nettype)
+
+
