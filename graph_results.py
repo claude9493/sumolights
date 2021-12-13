@@ -12,7 +12,6 @@ from src.graphs import graph, boxplot, multi_line, multi_line_with_CI, get_cmap,
 from src.picklefuncs import load_data
 from src.helper_funcs import check_and_make_dir
 
-exclude = {'gneJ0', 'gneJ6'}
 
 def main():
     global_params()
@@ -58,7 +57,7 @@ def graph_hyper_params(labels, colours, fp, save_dir):
     #get data
     for t in tsc:
         tsc_fp = fp+t+'/'
-        data = [ load_data(tsc_fp+f) for f in os.listdir(tsc_fp)]                                                 
+        data = [ load_data(tsc_fp+f) for f in os.listdir(tsc_fp)]
         tsc_hp[t] = np.stack([ [np.mean(d), np.std(d)] for d in data]).T
 
     #create appropriate graph
@@ -173,7 +172,7 @@ def graph_hyper_params(labels, colours, fp, save_dir):
     plt.show()
 
 def graph_travel_time(labels, colours, fp, save_dir):
-    #read metric data for all tsc types                                           
+    #read metric data for all tsc types
     data = get_data(fp, 'traveltime', get_folder_data)                               
     #prepare data for graph                                                          
     data_order = sorted(data.keys())                                                 
@@ -272,7 +271,6 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
     if 'sotl' in tsc:
         tsc.remove('sotl')
     intersections = os.listdir(fp+tsc[0]+'/'+metrics[0]+'/')
-    intersections = list(set(intersections) - exclude)
     ncols = len(intersections)
     nrows = len(metrics)
 

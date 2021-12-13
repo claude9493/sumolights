@@ -30,7 +30,7 @@ class SumoSim:
     def gen_sim(self):
         #create sim stuff and intersections
         #serverless_connect()
-        #self.conn, self.sumo_process = self.server_connect()
+        self.conn, self.sumo_process = self.server_connect()
 
         port = self.args.port+self.idx
         sumoBinary = checkBinary(self.sumo_cmd)

@@ -107,14 +107,10 @@ venv.bak/
 *.swp
 networks/lust/
 *.csv
-*.h5
-*.p
 *.meta
 *.index
 *core
 core*
 *.out
 tmp/
-log.txt
 hp/
-figures/
