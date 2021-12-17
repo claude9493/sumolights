@@ -2,7 +2,7 @@ import numpy as np
 
 from src.rlagent import RLAgent
 
-class DDPGAgent(RLAgent):
+class TD3Agent(RLAgent):
     def __init__(self, networks, epsilon, exp_replay, n_actions, n_steps, n_batch, n_exp_replay, gamma, rl_stats, mode, updates):
         super().__init__(networks, epsilon, exp_replay, n_actions, n_steps, n_batch, n_exp_replay, gamma, rl_stats, mode, updates) 
         
@@ -32,11 +32,12 @@ class DDPGAgent(RLAgent):
         targets = np.expand_dims(targets, -1)
 
         #train critic
-        self.networks['critic'].backward( states, actions, targets )
+        self.networks['critic_1'].backward( states, actions, targets )
+        self.networks['critic_2'].backward( states, actions, targets )
 
         #get grads for actor
         actions = self.networks['actor'].forward(states, 'online')
-        grads = self.networks['critic'].gradients(states, actions)
+        grads = self.networks['critic_1'].gradients(states, actions)
         #train actor
         self.networks['actor'].backward(states, grads[0])
         self.rl_stats['updates'] += 1
@@ -47,7 +48,8 @@ class DDPGAgent(RLAgent):
         #update online with target params periodically
         if self.rl_stats['updates'] % update_freq == 0: 
             self.networks['actor'].transfer_weights()    
-            self.networks['critic'].transfer_weights()
+            self.networks['critic_1'].transfer_weights()
+            self.networks['critic_2'].transfer_weights()
 
     def process_batch(self, sample_batch):
         #batch compute bootstrap
@@ -85,10 +87,16 @@ class DDPGAgent(RLAgent):
             return np.stack(states), np.stack(actions), np.stack(targets)
 
     def next_state_bootstrap(self, next_states, terminals):
-        #batch next action
-        bootstrap_actions = self.networks['actor'].forward(next_states, 'target') 
-        #batch next state action bootstrap
-        R = self.networks['critic'].forward(next_states, bootstrap_actions, 'target')
+
+        q_next_ind_1 = np.argmax(self.networks['critic_1'].forward(next_states, 'online'), axis=-1)
+        q_next_s_1 = self.networks['critic_1'].forward(next_states, 'target')
+        R_1 = np.take_along_axis(q_next_s_1, np.expand_dims(q_next_ind_1, axis=-1), axis=-1).squeeze(axis=-1)
+
+        q_next_ind_2 = np.argmax(self.networks['critic_2'].forward(next_states, 'online'), axis=-1)
+        q_next_s_2 = self.networks['critic_2'].forward(next_states, 'target')
+        R_2 = np.take_along_axis(q_next_s_2, np.expand_dims(q_next_ind_2, axis=-1), axis=-1).squeeze(axis=-1)
+
+        R = min(R_1, R_2)
 
         return [ 0.0 if t is True else r[0] for t, r in zip(terminals, R)] 
 
@@ -112,5 +120,8 @@ class DDPGAgent(RLAgent):
 
         target_batch.reverse()
         return target_batch
+
+
+
 
 

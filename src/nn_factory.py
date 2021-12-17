@@ -5,6 +5,8 @@ import alg_collections
 from src.neuralnets.dqn import DQN
 from src.neuralnets.ddpgactor import DDPGActor
 from src.neuralnets.ddpgcritic import DDPGCritic
+from src.neuralnets.td3critic import TD3Critic
+from src.neuralnets.td3actor import TD3Actor
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -34,7 +36,32 @@ def nn_factory( nntype, input_d, output_d, args, learner, load, tsc, n_hidden, s
                                       args.lre, args.tau,      
                                       learner=learner,         
                                       name='critic'+tsc,
-                                      sess=sess)       
+                                      sess=sess)
+    elif nntype in alg_collections.nn_td3:
+        nn = {}
+        nn['actor'] = TD3Actor(input_d, hidden_layers,
+                                args.hidden_act, output_d,
+                                'tanh', args.lr, args.lre,
+                                args.tau, learner=learner,
+                                name='actor'+tsc,
+                                batch_size=args.batch,
+                                sess=sess)
+        if learner:
+            #only need ddpg critic on learner procs
+            nn['critic_1'] = TD3Critic(input_d, hidden_layers,
+                                      args.hidden_act, 1,
+                                      'linear', args.lrc,
+                                      args.lre, args.tau,
+                                      learner=learner,
+                                      name='critic'+tsc,
+                                      sess=sess)
+            nn['critic_2'] = TD3Critic(input_d, hidden_layers,
+                                      args.hidden_act, 1,
+                                      'linear', args.lrc,
+                                      args.lre, args.tau,
+                                      learner=learner,
+                                      name='critic' + tsc,
+                                      sess=sess)
     else:
         #raise not found exceptions
         assert 0, 'Supplied traffic signal control argument type '+str(tsc)+' does not exist.'
@@ -48,16 +75,18 @@ def get_in_out_d(tsctype, n_incoming_lanes, n_phases):
         return input_d, n_phases
     elif tsctype in alg_collections.nn_ddpg:
         return input_d, 1
+    elif tsctype in alg_collections.nn_td3:
+        return input_d, 1
     else:
         #raise not found exceptions
-        assert 0, 'Supplied traffic signal control argument type '+str(tsc)+' does not exist.'
+        assert 0, 'Supplied traffic signal control argument type '+str(tsctype)+' does not exist.'
 
 def gen_neural_networks(args, netdata, tsctype, tsc_ids, learner, load, n_hidden):
         neural_nets = {}
         if tsctype in alg_collections.tsc_rl:
             sess = None
             #if using tf, prepare necessary
-            if tsctype in alg_collections.nn_ddpg:
+            if tsctype in alg_collections.nn_ddpg or tsctype in alg_collections.nn_td3:
 
                 #config = tf.ConfigProto(intra_op_parallelism_threads=1, 
                 #                        inter_op_parallelism_threads=1, 
@@ -84,7 +113,7 @@ def gen_neural_networks(args, netdata, tsctype, tsc_ids, learner, load, n_hidden
                                               sess=sess)
  
             #if using tf, init all vars
-            if tsctype in alg_collections.nn_ddpg:
+            if tsctype in alg_collections.nn_ddpg or tsctype in alg_collections.nn_td3:
                 sess.run(tf.compat.v1.global_variables_initializer())
 
             #load the saved weights
@@ -98,7 +127,11 @@ def gen_neural_networks(args, netdata, tsctype, tsc_ids, learner, load, n_hidden
                     elif tsctype in alg_collections.nn_ddpg:
                         for n in neural_nets[tsc]:                     
                             path = '/'.join(path_dirs+[n,tsc])         
-                            neural_nets[tsc][n].load_weights(path)     
+                            neural_nets[tsc][n].load_weights(path)
+                    elif tsctype in alg_collections.nn_td3:
+                        for n in neural_nets[tsc]:
+                            path = '/'.join(path_dirs+[n,tsc])
+                            neural_nets[tsc][n].load_weights(path)
 
                 print('... successfully loaded '+str(tsctype)+' parameters')
         return neural_nets

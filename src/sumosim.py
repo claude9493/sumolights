@@ -132,6 +132,7 @@ class SumoSim:
         for i in all_intersections - tl_junc:
             del self.netdata['inter'][i]
 
+        # print(self.netdata)
         return self.netdata
 
     def sim_step(self):

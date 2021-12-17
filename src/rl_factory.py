@@ -1,6 +1,7 @@
 from src.rlagents.dqnagent import DQNAgent
 from src.rlagents.ddpgagent import DDPGAgent
 from src.rlagents.doubledqnagent import DoubleDQNAgent
+from src.rlagents.td3agent import TD3Agent
 import alg_collections
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -42,6 +43,18 @@ def rl_factory(rl_type, args, neural_network, exp_replay, rl_stats, n_actions, e
                         rl_stats,
                         args.mode,
                         args.updates)
+    elif rl_type in alg_collections.rl_td3:
+        return TD3Agent(neural_network,
+                         eps,
+                         exp_replay,
+                         n_actions,
+                         args.nsteps,
+                         args.batch,
+                         args.nreplay,
+                         args.gamma,
+                         rl_stats,
+                         args.mode,
+                         args.updates)
 
     else:
         #raise not found exceptions

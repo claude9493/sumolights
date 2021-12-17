@@ -156,7 +156,7 @@ class SimProc(Process):
     def sync_nn_weights(self, neural_networks):
         for nn in neural_networks:
             weights = self.rl_stats[nn]['online']
-            if self.args.tsc in alg_collections.nn_ddpg:
+            if self.args.tsc in alg_collections.nn_ddpg + alg_collections.nn_td3:
                 #sync actor weights
                 neural_networks[nn]['actor'].set_weights(weights, 'online')
             elif self.args.tsc in alg_collections.nn_dqn:

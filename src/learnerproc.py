@@ -178,6 +178,16 @@ class LearnerProc(Process):
                 weights = neural_networks[nn].get_weights('online')
                 #synchronize target/online weights
                 neural_networks[nn].set_weights(weights, 'target')
+            elif self.args.tsc in alg_collections.nn_td3:
+                #sync actor weights
+                weights = neural_networks[nn]['actor'].get_weights('online')
+                critic_1_weights = neural_networks[nn]['critic_1'].get_weights('online')
+                critic_2_weights = neural_networks[nn]['critic_2'].get_weights('online')
+
+                #synchronize target/online weights
+                neural_networks[nn]['actor'].set_weights(weights, 'target')
+                neural_networks[nn]['critic_1'].set_weights(critic_1_weights, 'target')
+                neural_networks[nn]['critic_2'].set_weights(critic_2_weights, 'target')
             else:
                 #raise not found exceptions
                 assert 0, 'Supplied RL traffic signal controller '+str(self.args.tsc)+' does not exist.'
@@ -196,6 +206,13 @@ class LearnerProc(Process):
             elif self.args.tsc in alg_collections.nn_dqn:
                 path = '/'.join(path_dirs)+'/'
                 neural_networks[nn].save_weights('online', path, nn)
+            elif self.args.tsc in alg_collections.nn_td3:
+                path = '/'.join(path_dirs+['critic_1'])+'/'
+                neural_networks[nn]['critic_1'].save_weights('online', path, nn)
+                path = '/'.join(path_dirs + ['critic_2']) + '/'
+                neural_networks[nn]['critic_2'].save_weights('online', path, nn)
+                path = '/'.join(path_dirs+['actor'])+'/'
+                neural_networks[nn]['actor'].save_weights('online', path, nn)
             else:
                 #raise not found exceptions
                 assert 0, 'Supplied RL traffic signal controller '+str(self.args.tsc)+' does not exist, cannot save.'

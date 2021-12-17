@@ -51,6 +51,11 @@ def tsc_factory(tsc_type, tl, args, netdata, rl_stats, exp_replay, neural_networ
                                 neural_network, exp_replay, rl_stats, 1, eps)
         return NextDurationRLTSC(conn, tl, args.mode, netdata, args.r, args.y,
                                  args.g_min, args.g_max, ddpgagent)
+    elif tsc_type == 'td3':
+        td3agent = rl_factory(tsc_type, args,
+                                neural_network, exp_replay, rl_stats, 1, eps)
+        return NextDurationRLTSC(conn, tl, args.mode, netdata, args.r, args.y,
+                                 args.g_min, args.g_max, td3agent)
     else:
         #raise not found exceptions
         assert 0, 'Supplied traffic signal control argument type '+str(tsc)+' does not exist.'
