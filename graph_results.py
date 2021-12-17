@@ -16,9 +16,9 @@ from src.helper_funcs import check_and_make_dir
 def main():
     global_params()
     #you must have the same number of colours as labels
-    colours = ['b', 'c', 'green', 'olive', 'brown', 'cyan', 'purple', 'y', 'm', 'gray']
+    colours = ['b', 'c', 'green', 'olive', 'brown', 'cyan', 'purple', 'y', 'm', 'gray', 'orange']
 
-    labels = {'ddpg':'DDPG', 'dqn':'DQN', 'dqn_queue':'DQN_Queue', 'dqn_pressure':'DQN_Pressure',
+    labels = {'ddpg':'DDPG', 'td3':'TD3', 'dqn':'DQN', 'dqn_queue':'DQN_Queue', 'dqn_pressure':'DQN_Pressure',
               'doubledqn':'DoubleDQN', 'doubledqn_pressure':'DoubleDQN_Pressure',
               'sotl':'SOTL', 'maxpressure':'Max-pressure', 'websters':'Webster\'s', 'uniform':'Uniform'}
     if len(colours) != len(labels):
