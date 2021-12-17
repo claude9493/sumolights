@@ -35,21 +35,22 @@ class TD3Agent(RLAgent):
         self.networks['critic_1'].backward( states, actions, targets )
         self.networks['critic_2'].backward( states, actions, targets )
 
-        #get grads for actor
-        actions = self.networks['actor'].forward(states, 'online')
-        grads = self.networks['critic_1'].gradients(states, actions)
-        # grads_2 = self.networks['critic_2'].gradients(states, actions)
-
-        #train actor
-        # self.networks['actor'].backward(states, min(grads_1[0], grads_2[0]))
-        self.networks['actor'].backward(states, grads[0])
         self.rl_stats['updates'] += 1
         self.rl_stats['n_exp'] -= 1
-        #send new actor weights for actor processes
-        self.send_weights('online')
 
         #update online with target params periodically
-        if self.rl_stats['updates'] % update_freq == 0: 
+        if self.rl_stats['updates'] % update_freq == 0:
+            # get grads for actor
+            actions = self.networks['actor'].forward(states, 'online')
+            grads = self.networks['critic_1'].gradients(states, actions)
+            # grads_2 = self.networks['critic_2'].gradients(states, actions)
+
+            # train actor
+            # self.networks['actor'].backward(states, min(grads_1[0], grads_2[0]))
+            self.networks['actor'].backward(states, grads[0])
+            # send new actor weights for actor processes
+            self.send_weights('online')
+
             self.networks['actor'].transfer_weights()    
             self.networks['critic_1'].transfer_weights()
             self.networks['critic_2'].transfer_weights()

@@ -12,6 +12,7 @@ from src.graphs import graph, boxplot, multi_line, multi_line_with_CI, get_cmap,
 from src.picklefuncs import load_data
 from src.helper_funcs import check_and_make_dir
 
+exclude = ['*.DS_Store']
 
 def main():
     global_params()
@@ -268,6 +269,7 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
     #columns are intersections
 
     tsc = os.listdir(fp)
+    tsc = list(set(tsc) - {'.DS_Store'})
     if 'sotl' in tsc:
         tsc.remove('sotl')
     intersections = os.listdir(fp+tsc[0]+'/'+metrics[0]+'/')
