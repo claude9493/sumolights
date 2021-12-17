@@ -196,10 +196,12 @@ def graph_travel_time(labels, colours, fp, save_dir):
                               # legend=(1.04,1),
                               grid=True)                                             
 
+    xticks = []
     for i, d in enumerate(data_order):
         text = '('+str(int(np.mean(data[i])))+', '+str(int( np.std(data[i]) ) )+', '+str(int( np.median(data[i]) ) )+r"$)$"
-        ax.text(i+1.1, 300, text, color= c[i])
-
+        xticks.append(text)
+        # ax.text(i+1.1, 300, text, color= c[i])
+    ax.set_xticks(list(range(len(data_order))), xticks)
     #f.suptitle('Travel Time')                                                        
     #display graph                                                                   
     save_graph(f, save_dir+'travel_time'+fig_suffix+'.pdf', 600, 14, 24.9)
