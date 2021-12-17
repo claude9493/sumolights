@@ -14,9 +14,9 @@ from src.helper_funcs import check_and_make_dir
 
 exclude = {'gneJ0', 'gneJ6'}
 
-tsc_list = ['uniform', 'sotl', 'maxpressure']
+tsc_list = ['dqn', 'dqn_queue', 'dqn_pressure']
 
-fig_suffix = "_classical"
+fig_suffix = "_dqn_reward"
 
 def main():
     global_params()
@@ -135,7 +135,7 @@ def graph_hyper_params(labels, colours, fp, save_dir):
     cb.ax.set_yticklabels(cb_labels)
 
     f.suptitle('Hyperparameter Performance')                                                            
-    save_graph(f, save_dir+'tsc_hp.pdf', 600, 14, 24.9)
+    save_graph(f, save_dir+'tsc_hp.pdf', 300, 14, 24.9)
     plt.show()                                                                            
 
     #now compare all tsc hp sets together in one graph
@@ -173,7 +173,7 @@ def graph_hyper_params(labels, colours, fp, save_dir):
         c = colours[d]
         patches.append( mpatches.Patch(color=c, label=labels[d]) )
     plt.legend(handles=patches, framealpha=1.0)
-    save_graph(f, save_dir+'hp.pdf', 600, 14, 24.9)
+    save_graph(f, save_dir+'hp.pdf', 300, 14, 24.9)
     plt.show()
 
 def graph_travel_time(labels, colours, fp, save_dir):
@@ -200,12 +200,12 @@ def graph_travel_time(labels, colours, fp, save_dir):
     for i, d in enumerate(data_order):
         text = '('+str(int(np.mean(data[i])))+', '+str(int( np.std(data[i]) ) )+', '+str(int( np.median(data[i]) ) )+r"$)$"
         # xticks.append(text)
-        # ax.text(i+1.1, 300, text, color= c[i])
-        ax.text(i+1, 1, text, color=c[i], ha='center')
+        ax.text(i+1.15, 300, text, color= 'black', fontsize=15)
+        # ax.text(i+1, 1, text, color=c[i], ha='center')
     # ax.set_xticks(np.arange(len(data_order)), labels=xticks)
     #f.suptitle('Travel Time')                                                        
     #display graph                                                                   
-    save_graph(f, save_dir+'travel_time'+fig_suffix+'.pdf', 600, 14, 24.9)
+    save_graph(f, save_dir+'travel_time'+fig_suffix+'.png', 300, 14, 24.9)
     plt.show()                                                                       
 
 def graph_conf_interval(labels, colours, fp, metric):
@@ -299,7 +299,7 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
         xtitle = 'Time '+r" $(min)$" if r == nrows-1 else ''
         #graph same metric for each intersection
         for I, c in zip(intersections, range(ncols)):
-            title = I if r == 0 else ''
+            title = '' if r == 0 else ''
             if m in ['queue', 'pressure']:
                 ytitle = m.capitalize()+r" $(veh)$" if c == 0 else ''
             elif m == 'delay':
@@ -320,6 +320,7 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
                    xtitle=xtitle,
                    ytitle_pad = (ytitle , 60),
                    title=title,
+                   # title='',
                    legend=legend,
                    colours = label_c,
                    grid=True)
@@ -328,7 +329,7 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
             # if m == 'delay':
             #     ax[r,c].set_yscale('symlog', basey=10)
     f.suptitle('Intersection Measures of Effectiveness')                                             
-    save_graph(f, save_dir+'intersection_moe'+fig_suffix+'.pdf', 600, 14, 24.9)
+    save_graph(f, save_dir+'intersection_moe'+fig_suffix+'.png', 300, 14, 24.9)
     plt.show() 
 
 def alias(data, a):
