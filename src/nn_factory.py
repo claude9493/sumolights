@@ -53,14 +53,14 @@ def nn_factory( nntype, input_d, output_d, args, learner, load, tsc, n_hidden, s
                                       'linear', args.lrc,
                                       args.lre, args.tau,
                                       learner=learner,
-                                      name='critic'+tsc,
+                                      name='critic_1'+tsc,
                                       sess=sess)
             nn['critic_2'] = TD3Critic(input_d, hidden_layers,
                                       args.hidden_act, 1,
                                       'linear', args.lrc,
                                       args.lre, args.tau,
                                       learner=learner,
-                                      name='critic' + tsc,
+                                      name='critic_2' + tsc,
                                       sess=sess)
     else:
         #raise not found exceptions
