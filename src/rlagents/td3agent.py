@@ -38,7 +38,10 @@ class TD3Agent(RLAgent):
         #get grads for actor
         actions = self.networks['actor'].forward(states, 'online')
         grads = self.networks['critic_1'].gradients(states, actions)
+        # grads_2 = self.networks['critic_2'].gradients(states, actions)
+
         #train actor
+        # self.networks['actor'].backward(states, min(grads_1[0], grads_2[0]))
         self.networks['actor'].backward(states, grads[0])
         self.rl_stats['updates'] += 1
         self.rl_stats['n_exp'] -= 1
@@ -88,17 +91,25 @@ class TD3Agent(RLAgent):
 
     def next_state_bootstrap(self, next_states, terminals):
 
-        q_next_ind_1 = np.argmax(self.networks['critic_1'].forward(next_states, 'online'), axis=-1)
-        q_next_s_1 = self.networks['critic_1'].forward(next_states, 'target')
-        R_1 = np.take_along_axis(q_next_s_1, np.expand_dims(q_next_ind_1, axis=-1), axis=-1).squeeze(axis=-1)
+        bootstrap_actions = self.networks['actor'].forward(next_states, 'target')
 
-        q_next_ind_2 = np.argmax(self.networks['critic_2'].forward(next_states, 'online'), axis=-1)
-        q_next_s_2 = self.networks['critic_2'].forward(next_states, 'target')
-        R_2 = np.take_along_axis(q_next_s_2, np.expand_dims(q_next_ind_2, axis=-1), axis=-1).squeeze(axis=-1)
+        q_next_ind = np.argmax(self.networks['critic_1'].forward(next_states, 'online'), axis=-1)
+        q_next_s = self.networks['critic_1'].forward(next_states, bootstrap_actions, 'target')
+        R_1 = np.take_along_axis(q_next_s, np.expand_dims(q_next_ind, axis=-1), axis=-1).squeeze(axis=-1)
 
-        R = min(R_1, R_2)
+        q_next_ind = np.argmax(self.networks['critic_2'].forward(next_states, 'online'), axis=-1)
+        q_next_s = self.networks['critic_2'].forward(next_states, bootstrap_actions, 'target')
+        R_2 = np.take_along_axis(q_next_s, np.expand_dims(q_next_ind, axis=-1), axis=-1).squeeze(axis=-1)
 
-        return [ 0.0 if t is True else r[0] for t, r in zip(terminals, R)] 
+        print("这是R1")
+        print(R_1)
+
+        print("这是R2")
+        print(R_2)
+
+
+
+        return [ 0.0 if t is True else r[0] for t, r in zip(terminals, R_1)]
 
     def process_trajectory(self, rewards, R):
         #targets = self.compute_targets(rewards, R)
