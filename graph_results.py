@@ -12,7 +12,9 @@ from src.graphs import graph, boxplot, multi_line, multi_line_with_CI, get_cmap,
 from src.picklefuncs import load_data
 from src.helper_funcs import check_and_make_dir
 
-exclude = ['*.DS_Store']
+exclude = {'gneJ0', 'gneJ6'}
+
+tsc_list = ['uniform', 'sotl', 'pressure']
 
 def main():
     global_params()
@@ -222,8 +224,8 @@ def graph_conf_interval(labels, colours, fp, metric):
     plt.show()                                                           
 
 def get_data(fp, metric, read_data_func):
-    tsc = os.listdir(fp)
-    tsc = list(set(tsc) - {'.DS_Store'})
+    tsc = tsc_list if tsc_list else os.listdir(fp)
+    tsc = list(set(tsc) - {'.DS_Store'} - exclude)
     tsc_data = { t:read_data_func(fp+t+'/'+metric) for t in tsc}
     return tsc_data
 
@@ -234,7 +236,7 @@ def get_metric_data(fp):
         assert 0, 'Supplied path '+str(fp)+' does not exist.'
 
     tsc_data = {tsc_id:sorted(os.listdir(fp+'/'+tsc_id)) 
-                    for tsc_id in os.listdir(fp)}
+                    for tsc_id in list(set(os.listdir(fp)) - - exclude)}
     sim_runs_data = []
 
     #until all data has been popped
@@ -268,8 +270,8 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
     #rows are metrics
     #columns are intersections
 
-    tsc = os.listdir(fp)
-    tsc = list(set(tsc) - {'.DS_Store'})
+    tsc = tsc_list if tsc_list else os.listdir(fp)
+    tsc = list(set(tsc) - {'.DS_Store'} - exclude)
     if 'sotl' in tsc:
         tsc.remove('sotl')
     intersections = os.listdir(fp+tsc[0]+'/'+metrics[0]+'/')
