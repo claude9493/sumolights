@@ -14,7 +14,9 @@ from src.helper_funcs import check_and_make_dir
 
 exclude = {'gneJ0', 'gneJ6'}
 
-tsc_list = ['uniform', 'sotl', 'pressure']
+tsc_list = ['uniform', 'sotl', 'maxpressure']
+
+fig_suffix = "_classical"
 
 def main():
     global_params()
@@ -200,7 +202,7 @@ def graph_travel_time(labels, colours, fp, save_dir):
 
     #f.suptitle('Travel Time')                                                        
     #display graph                                                                   
-    save_graph(f, save_dir+'travel_time.pdf', 600, 14, 24.9)
+    save_graph(f, save_dir+'travel_time'+fig_suffix+'.pdf', 600, 14, 24.9)
     plt.show()                                                                       
 
 def graph_conf_interval(labels, colours, fp, metric):
@@ -323,7 +325,7 @@ def graph_individual_intersections(labels, colours, fp, metrics, save_dir):
             # if m == 'delay':
             #     ax[r,c].set_yscale('symlog', basey=10)
     f.suptitle('Intersection Measures of Effectiveness')                                             
-    save_graph(f, save_dir+'intersection_moe.pdf', 600, 14, 24.9)
+    save_graph(f, save_dir+'intersection_moe'+fig_suffix+'.pdf', 600, 14, 24.9)
     plt.show() 
 
 def alias(data, a):
