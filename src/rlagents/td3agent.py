@@ -96,9 +96,12 @@ class TD3Agent(RLAgent):
         q_next_s_2 = self.networks['critic_2'].forward(next_states, 'target')
         R_2 = np.take_along_axis(q_next_s_2, np.expand_dims(q_next_ind_2, axis=-1), axis=-1).squeeze(axis=-1)
 
-        R = min(R_1, R_2)
-
-        return [ 0.0 if t is True else r[0] for t, r in zip(terminals, R)] 
+        # print("R1: " + R_1)
+        # print("R2: " + R_2)
+        R = np.minimum(R_1, R_2)
+        print("R: " + R)
+        # print("R: " + R)
+        return [ 0.0 if t is True else r for t, r in zip(terminals, R)]
 
     def process_trajectory(self, rewards, R):
         #targets = self.compute_targets(rewards, R)
